@@ -13,6 +13,7 @@ LearnBot - это учебный бот для мессенджера telegram, 
     pip install -r requirements.txt
 
 Положите картинки с котиками в папку images. Название файлов должно начинаться с cat, и иметь расширение .jpg или .jpeg. Пример: catingo.jpg
+Также бот умеет распознавать фотографии котиков при помощи сервиса `Clarifai`_.
 
 Настройка
 ---------
@@ -29,6 +30,8 @@ LearnBot - это учебный бот для мессенджера telegram, 
 
     USER_EMOJI = [':smiley_cat:', ':smiling_imp:', ':panda_face:', ':dog:']  
 
+    CLARIFAI_API = "Api ключ, который вы получите от CLARIFAI"
+
 
 Запуск
 ------
@@ -38,3 +41,6 @@ LearnBot - это учебный бот для мессенджера telegram, 
 .. code-block:: text
 
     python bot.py
+
+
+.. _Clarifai: https://clarifai.com/
