@@ -42,5 +42,4 @@ LearnBot - это учебный бот для мессенджера telegram, 
 
     python bot.py
 
-
 .. _Clarifai: https://clarifai.com/
