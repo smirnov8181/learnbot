@@ -3,7 +3,9 @@ import os
 import logging
 from random import choice
 
-from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode, error
+from emoji import emojize
+from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode,\
+     error, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ConversationHandler
 from telegram.ext import messagequeue as mq
 
@@ -45,7 +47,11 @@ def send_cat_picture(bot, update, user_data):
     user = get_or_create_user(db, update.effective_user, update.message)
     cat_list = glob('images/cat*.jp*g')
     cat_pic = choice(cat_list)
-    bot.send_photo(chat_id=update.message.chat.id, photo=open(cat_pic, 'rb'), reply_markup=get_keyboard())
+    inlinekbd = [[InlineKeyboardButton(emojize(":thumbs_up:"), callback_data='cat_good'), 
+                InlineKeyboardButton(emojize(":thumbs_down:"), callback_data='cat_bad')]]
+
+    kbd_markup = InlineKeyboardMarkup(inlinekbd)
+    bot.send_photo(chat_id=update.message.chat.id, photo=open(cat_pic, 'rb'), reply_markup=kbd_markup)
 
 def change_avatar(bot, update, user_data):
     user = get_or_create_user(db, update.effective_user, update.message)
@@ -123,6 +129,14 @@ def subscribe(bot, update):
         toggle_subscription(db, user)
     update.message.reply_text('Вы подписались')
 
+def inline_button_pressed(bot, update):
+    query = update.callback_query
+    if query.data in ['cat_good', 'cat_bad']:
+        text = "Круто!" if query.data == 'cat_good'  else "Печаль :("
+    
+        bot.edit_message_caption(caption=text, chat_id=query.message.chat.id, message_id=query.message.message_id)
+
+
 @mq.queuedmessage
 def send_updates(bot, job):
     for user in get_subscribers(db):
@@ -130,6 +144,7 @@ def send_updates(bot, job):
             bot.sendMessage(chat_id=user['chat_id'], text='Куку')
         except error.BadRequest:
             print('Chat {} not found'.format(user['chat_id']))
+    
 
 def unsubscribe(bot, update):
     user = get_or_create_user(db, update.effective_user, update.message)
